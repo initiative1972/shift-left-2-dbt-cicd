@@ -1,0 +1,70 @@
+version: 2
+
+models:
+  - name: account_balances
+    description: One row per account with its current closing balance (sum of transactions).
+    columns:
+      - name: account_id
+        description: Primary key. Unique account identifier.
+        data_tests:
+          - unique
+          - not_null
+      - name: account_name
+        description: Human-readable account name.
+      - name: account_type
+        description: Account category (transaction or savings).
+      - name: closing_balance
+        description: Sum of all transaction amounts for the account, in AUD.
+        data_tests:
+          - not_null
+
+  - name: account_interest
+    description: >-
+      Tiered monthly interest per account, derived from the closing balance.
+      The calculation is covered by a dbt unit test (see unit_tests below).
+    columns:
+      - name: account_id
+        description: Primary key. Unique account identifier.
+        data_tests:
+          - unique
+          - not_null
+      - name: closing_balance
+        description: Account closing balance the interest is calculated on, in AUD.
+        data_tests:
+          - not_null
+      - name: annual_rate
+        description: Annual interest rate applied, selected by balance tier.
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: [0.0050, 0.0150, 0.0275]
+              quote: false
+      - name: monthly_interest
+        description: Monthly interest = closing_balance * annual_rate / 12, rounded to 2 dp.
+        data_tests:
+          - not_null
+
+# ---------------------------------------------------------------------------
+# dbt unit test: validates the tiered-interest logic against static mock inputs,
+# with NO database round-trip of real data. This is the "test the transformation
+# logic before it ships" money shot.
+# ---------------------------------------------------------------------------
+unit_tests:
+  - name: test_tiered_interest_calculation
+    model: account_interest
+    description: Each balance tier maps to the correct rate and monthly interest.
+    given:
+      - input: ref('account_balances')
+        rows:
+          - {account_id: "ACC-001", closing_balance: 500.00}      # low tier
+          - {account_id: "ACC-002", closing_balance: 1000.00}     # tier boundary (<= 1000)
+          - {account_id: "ACC-003", closing_balance: 5000.00}     # mid tier
+          - {account_id: "ACC-004", closing_balance: 10000.00}    # tier boundary (<= 10000)
+          - {account_id: "ACC-005", closing_balance: 20000.00}    # high tier
+    expect:
+      rows:
+        - {account_id: "ACC-001", closing_balance: 500.00, annual_rate: 0.0050, monthly_interest: 0.21}
+        - {account_id: "ACC-002", closing_balance: 1000.00, annual_rate: 0.0050, monthly_interest: 0.42}
+        - {account_id: "ACC-003", closing_balance: 5000.00, annual_rate: 0.0150, monthly_interest: 6.25}
+        - {account_id: "ACC-004", closing_balance: 10000.00, annual_rate: 0.0150, monthly_interest: 12.50}
+        - {account_id: "ACC-005", closing_balance: 20000.00, annual_rate: 0.0275, monthly_interest: 45.83}

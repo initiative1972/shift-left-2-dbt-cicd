@@ -1,0 +1,9 @@
+account_id,account_name,account_type,opened_date
+ACC-001,Everyday Account,transaction,2024-01-15
+ACC-002,Bills Account,transaction,2024-02-03
+ACC-003,Savings Maximiser,savings,2023-11-20
+ACC-004,Holiday Fund,savings,2024-05-09
+ACC-005,Joint Everyday,transaction,2023-08-01
+ACC-006,Emergency Buffer,savings,2024-03-27
+ACC-007,Rainy Day,savings,2024-06-14
+ACC-008,Term Deposit Feeder,savings,2023-12-30

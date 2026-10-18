@@ -1,0 +1,32 @@
+version: 2
+
+seeds:
+  - name: raw_accounts
+    description: >-
+      Synthetic raw account reference data. Mock data only — no real, customer,
+      or employer data.
+    columns:
+      - name: account_id
+        description: Primary key. Unique account identifier.
+      - name: account_name
+        description: Human-readable account name.
+      - name: account_type
+        description: Account category (transaction or savings).
+      - name: opened_date
+        description: Date the account was opened.
+
+  - name: raw_transactions
+    description: >-
+      Synthetic raw transaction events (deposits positive, withdrawals negative).
+      Mock data only.
+    columns:
+      - name: transaction_id
+        description: Primary key. Unique transaction identifier.
+      - name: account_id
+        description: Foreign key to raw_accounts.account_id.
+      - name: amount
+        description: Signed transaction amount in AUD.
+      - name: currency
+        description: ISO 4217 currency code.
+      - name: txn_date
+        description: Date the transaction settled.

@@ -1,0 +1,48 @@
+# Shift-left on the developer's machine. Install once with:
+#   pip install pre-commit && pre-commit install
+# Then every `git commit` runs these gates. Non-compliant SQL never leaves the laptop.
+#
+# These are also the Week 10 lead magnet — copy this file straight into any dbt repo.
+
+repos:
+  # --- 1. Formatting / linting ------------------------------------------------
+  - repo: https://github.com/sqlfluff/sqlfluff
+    rev: 4.4.0
+    hooks:
+      - id: sqlfluff-lint
+        additional_dependencies:
+          - sqlfluff-templater-dbt==4.4.0
+          - dbt-duckdb>=1.9,<1.10
+      - id: sqlfluff-fix
+        additional_dependencies:
+          - sqlfluff-templater-dbt==4.4.0
+          - dbt-duckdb>=1.9,<1.10
+
+  # --- 2. Metadata governance (dbt-checkpoint) --------------------------------
+  # dbt-parse regenerates target/manifest.json so the checks below can read it.
+  - repo: https://github.com/dbt-checkpoint/dbt-checkpoint
+    rev: v2.0.10
+    hooks:
+      - id: dbt-parse
+
+      # Every model must have at least one test before it can be committed.
+      - id: check-model-has-tests
+        args: ["--test-cnt", "1", "--"]
+
+      # Every model must have a description.
+      - id: check-model-has-description
+
+      # Every column on every model must be described.
+      - id: check-model-columns-have-desc
+
+      # Any declared source table must be described.
+      - id: check-source-table-has-description
+
+  # --- 3. General hygiene -----------------------------------------------------
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: check-merge-conflict

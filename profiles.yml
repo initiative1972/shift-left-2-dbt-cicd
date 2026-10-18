@@ -1,0 +1,17 @@
+# Local, zero-config profile. DuckDB writes to a single file in the repo root —
+# no warehouse account, no credentials. This file lives in the project so the
+# whole thing runs with `DBT_PROFILES_DIR=.` (set by the Makefile and CI).
+dbt_cicd:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: dev.duckdb
+      threads: 4
+    # CI target used by the Slim CI build. The path is overridable so the
+    # "production state" build (from main) and the PR build can share one
+    # DuckDB file, which is what makes --defer / --favor-state work.
+    ci:
+      type: duckdb
+      path: "{{ env_var('DBT_DUCKDB_PATH', 'ci.duckdb') }}"
+      threads: 4

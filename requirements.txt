@@ -1,0 +1,7 @@
+# Pinned to the dbt 1.9 line (stable unit-test support + state:modified selection).
+# These tools move fast — bump deliberately and re-run `make demo` after upgrading.
+dbt-core>=1.9,<1.10
+dbt-duckdb>=1.9,<1.10
+pre-commit>=4.0
+sqlfluff==4.4.0
+sqlfluff-templater-dbt==4.4.0

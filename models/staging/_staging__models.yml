@@ -1,0 +1,47 @@
+version: 2
+
+models:
+  - name: stg_accounts
+    description: Cleaned, typed account reference data, one row per account.
+    columns:
+      - name: account_id
+        description: Primary key. Unique account identifier.
+        data_tests:
+          - unique
+          - not_null
+      - name: account_name
+        description: Human-readable account name.
+      - name: account_type
+        description: Account category (transaction or savings).
+        data_tests:
+          - accepted_values:
+              values: ["transaction", "savings"]
+      - name: opened_date
+        description: Date the account was opened (typed to date).
+
+  - name: stg_transactions
+    description: Cleaned, typed transaction events, one row per transaction.
+    columns:
+      - name: transaction_id
+        description: Primary key. Unique transaction identifier.
+        data_tests:
+          - unique
+          - not_null
+      - name: account_id
+        description: Foreign key to stg_accounts.account_id.
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('stg_accounts')
+              field: account_id
+      - name: amount
+        description: Signed transaction amount in AUD (decimal 18,2).
+        data_tests:
+          - not_null
+      - name: currency
+        description: ISO 4217 currency code.
+        data_tests:
+          - accepted_values:
+              values: ["AUD"]
+      - name: txn_date
+        description: Date the transaction settled (typed to date).
