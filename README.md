@@ -1,12 +1,14 @@
 # shift-left-2-dbt-cicd
 # Extreme CI/CD for dbt
 
+Project 2 of a shift-left data-engineering portfolio. 
+
 > Badly formatted, undocumented, untested or destructive SQL never leaves the laptop — and CI only rebuilds what actually changed.
 
 [![quality](https://github.com/initiative1972/shift-left-2-dbt-cicd/actions/workflows/quality.yml/badge.svg)](../../actions/workflows/quality.yml)
 [![slim-ci](https://github.com/initiative1972/shift-left-2-dbt-cicd/actions/workflows/slim-ci.yml/badge.svg)](../../actions/workflows/slim-ci.yml)
 
-Project 2 of a shift-left data-engineering portfolio. Where [[../project-1-webhook-interceptor](https://github.com/initiative1972/shift-left-1-webhook-interceptor)] guards the **ingestion boundary** with a data contract, this project shows the **day-to-day craft**: quality enforced on the developer's machine with pre-commit, and a cost-aware CI pipeline that only builds the models a change actually touches.
+Where [[../project-1-webhook-interceptor](https://github.com/initiative1972/shift-left-1-webhook-interceptor)] guards the **ingestion boundary** with a data contract, this project shows the **day-to-day craft**: quality enforced on the developer's machine with pre-commit, and a cost-aware CI pipeline that only builds the models a change actually touches.
 
 It's a complete, runnable **dbt + DuckDB** project — no warehouse account, no credit card.
 
